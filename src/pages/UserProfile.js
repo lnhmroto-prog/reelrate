@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Tab, Tabs, Button, Alert, Badge } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
-import { getReviews, deleteReview } from '../services/reviewService';
+import { getReviews, deleteReview, syncUserStats } from '../services/reviewService';
+import { getUserProfile } from '../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaTrash, FaStar, FaFilm } from 'react-icons/fa';
 import StarRating from '../components/StarRating';
@@ -9,6 +10,7 @@ import StarRating from '../components/StarRating';
 const UserProfile = () => {
   const { currentUser, isAuthenticated } = useAuth();
   const [userReviews, setUserReviews] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -22,10 +24,20 @@ const UserProfile = () => {
 
       setLoading(true);
       try {
+        // Fetch user reviews first
         const response = await getReviews({ userId: currentUser.uid });
-        // Handle the response object structure
         const reviewsData = response.success ? (response.data || []) : [];
         setUserReviews(reviewsData);
+        
+        // Sync user stats to ensure they're up to date
+        await syncUserStats(currentUser.uid);
+        
+        // Then fetch user profile with updated stats
+        const profileResponse = await getUserProfile(currentUser.uid);
+        if (profileResponse.success) {
+          setUserProfile(profileResponse.data);
+        }
+        
       } catch (err) {
         setError('Failed to load user data');
         console.error('Error fetching user data:', err);
@@ -35,12 +47,14 @@ const UserProfile = () => {
     };
 
     fetchUserData();
-  }, [currentUser, isAuthenticated, navigate]);
+    // Re-fetch reviews every time the component mounts to ensure fresh data
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.uid, isAuthenticated]);
 
   const handleDeleteReview = async (reviewId, movieId) => {
     if (window.confirm('Are you sure you want to delete this review?')) {
       try {
-        const response = await deleteReview(reviewId, movieId);
+        const response = await deleteReview(reviewId, currentUser.uid);
         if (response.success) {
           // Update the state to remove the deleted review
           setUserReviews(prev => prev.filter(review => review.id !== reviewId));
@@ -57,10 +71,14 @@ const UserProfile = () => {
 
   const calculateStats = () => {
     const reviewCount = Array.isArray(userReviews) ? userReviews.length : 0;
-    const avgRating = reviewCount === 0 ? 0 : 
+    const calculatedAvgRating = reviewCount === 0 ? 0 : 
       (userReviews.reduce((acc, review) => acc + review.rating, 0) / reviewCount).toFixed(1);
     
-    return { reviewCount, avgRating };
+    // Use the database values if available, otherwise use calculated values
+    const totalReviews = userProfile?.totalReviews ?? reviewCount;
+    const avgRating = userProfile?.averageRating ?? calculatedAvgRating;
+    
+    return { reviewCount, avgRating, totalReviews };
   };
 
   const stats = calculateStats();
@@ -123,7 +141,7 @@ const UserProfile = () => {
             <Card.Body>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <span className="text-light"><FaFilm className="me-2" style={{ color: '#e50914' }} />Total Reviews:</span>
-                <Badge bg="danger" className="text-white">{stats.reviewCount}</Badge>
+                <Badge bg="danger" className="text-white">{stats.totalReviews}</Badge>
               </div>
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="text-light"><FaStar className="me-2" style={{ color: '#ffd700' }} />Average Rating:</span>
@@ -135,8 +153,8 @@ const UserProfile = () => {
 
         <Col lg={8}>
           <Tabs defaultActiveKey="reviews" id="profile-tabs" className="mb-3">
-            <Tab eventKey="reviews" title={`Reviews (${stats.reviewCount})`}>
-              {stats.reviewCount === 0 ? (
+            <Tab eventKey="reviews" title={`Reviews (${stats.totalReviews})`}>
+              {stats.totalReviews === 0 ? (
                 <div className="empty-state">
                   <h3>No Reviews Yet</h3>
                   <p>You haven't written any reviews yet. Start sharing your movie thoughts!</p>
