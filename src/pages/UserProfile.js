@@ -24,15 +24,12 @@ const UserProfile = () => {
 
       setLoading(true);
       try {
-        // Fetch user reviews first
         const response = await getReviews({ userId: currentUser.uid });
         const reviewsData = response.success ? (response.data || []) : [];
         setUserReviews(reviewsData);
         
-        // Sync user stats to ensure they're up to date
         await syncUserStats(currentUser.uid);
         
-        // Then fetch user profile with updated stats
         const profileResponse = await getUserProfile(currentUser.uid);
         if (profileResponse.success) {
           setUserProfile(profileResponse.data);
@@ -47,8 +44,6 @@ const UserProfile = () => {
     };
 
     fetchUserData();
-    // Re-fetch reviews every time the component mounts to ensure fresh data
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.uid, isAuthenticated]);
 
   const handleDeleteReview = async (reviewId, movieId) => {
@@ -56,9 +51,8 @@ const UserProfile = () => {
       try {
         const response = await deleteReview(reviewId, currentUser.uid);
         if (response.success) {
-          // Update the state to remove the deleted review
           setUserReviews(prev => prev.filter(review => review.id !== reviewId));
-          setError(''); // Clear any previous errors
+          setError(''); 
         } else {
           setError(response.error || 'Failed to delete review');
         }
@@ -74,7 +68,6 @@ const UserProfile = () => {
     const calculatedAvgRating = reviewCount === 0 ? 0 : 
       (userReviews.reduce((acc, review) => acc + review.rating, 0) / reviewCount).toFixed(1);
     
-    // Use the database values if available, otherwise use calculated values
     const totalReviews = userProfile?.totalReviews ?? reviewCount;
     const avgRating = userProfile?.averageRating ?? calculatedAvgRating;
     
@@ -221,3 +214,4 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
