@@ -36,7 +36,6 @@ export const createReview = async (reviewData) => {
       };
     }
     
-    // Add the review
     const reviewRef = doc(collection(db, COLLECTIONS.REVIEWS));
     await setDoc(reviewRef, {
       ...reviewData,
@@ -45,7 +44,6 @@ export const createReview = async (reviewData) => {
       updatedAt: new Date()
     });
     
-    // Recalculate and update user stats
     await syncUserStats(reviewData.userId);
     
     return { success: true, id: reviewRef.id };
@@ -135,11 +133,9 @@ export const updateReview = async (reviewId, updateData) => {
 
 export const deleteReview = async (reviewId, userId) => {
   try {
-    // Delete the review
     const reviewRef = doc(db, COLLECTIONS.REVIEWS, reviewId);
     await deleteDoc(reviewRef);
     
-    // Recalculate and update user stats
     if (userId) {
       await syncUserStats(userId);
     }
@@ -154,7 +150,6 @@ export const markReviewHelpful = async (reviewId) => {
   try {
     const docRef = doc(db, COLLECTIONS.REVIEWS, reviewId);
     
-    // Get current helpful count
     const reviewDoc = await getDoc(docRef);
     if (!reviewDoc.exists()) {
       return { success: false, error: 'Review not found' };
@@ -201,7 +196,6 @@ export const getReviewStats = async () => {
   }
 };
 
-// Sync user statistics based on their actual reviews
 export const syncUserStats = async (userId) => {
   try {
     const reviewsResponse = await getReviews({ userId });
@@ -212,7 +206,6 @@ export const syncUserStats = async (userId) => {
       ? reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews 
       : 0;
     
-    // Update user document with calculated stats
     const userRef = doc(db, COLLECTIONS.USERS, userId);
     await updateDoc(userRef, {
       totalReviews,
@@ -229,3 +222,4 @@ export const syncUserStats = async (userId) => {
     return { success: false, error: error.message };
   }
 };
+
