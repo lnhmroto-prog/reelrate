@@ -45,14 +45,12 @@ const MovieDetails = () => {
         
         setMovie(movieData);
         
-        // Find the official trailer
         const officialTrailer = videosData.find(video => 
           video.type === 'Trailer' && video.name.toLowerCase().includes('official')
         ) || videosData.find(video => video.type === 'Trailer') || videosData[0];
         
         setTrailer(officialTrailer);
         
-        // Fetch reviews
         await fetchReviews();
         
       } catch (error) {
@@ -102,7 +100,6 @@ const MovieDetails = () => {
         setNewReview({ rating: 5, comment: '' });
         setSubmitSuccess(true);
         
-        // Refresh reviews list
         await fetchReviews();
         
         setTimeout(() => setSubmitSuccess(false), 3000);
@@ -222,7 +219,6 @@ const MovieDetails = () => {
           </Col>
         </Row>
 
-      {/* Trailer Section */}
       {trailer && (
         <Row className="mb-5">
           <Col>
@@ -360,5 +356,6 @@ const MovieDetails = () => {
     </Container>
   );
 };
+
 
 export default MovieDetails;
