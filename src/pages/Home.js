@@ -112,21 +112,32 @@ const Home = () => {
                   >
                     <Container>
                       <Row>
-                        <Col md={8}>
-                          <h2 className="text-gradient mb-3 display-5">{movie.title}</h2>
-                          <p className="text-white lead mb-4 movie-overview" style={{padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', borderLeft: '4px solid #e50914'}}>
+                        <Col xs={12} md={8}>
+                          <h2 className="text-gradient mb-3" style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}>
+                            {movie.title}
+                          </h2>
+                          <p 
+                            className="text-white mb-4 d-none d-md-block movie-overview" 
+                            style={{
+                              padding: '1rem', 
+                              background: 'rgba(0,0,0,0.3)', 
+                              borderRadius: '12px', 
+                              borderLeft: '4px solid #e50914',
+                              fontSize: 'clamp(0.9rem, 2vw, 1.25rem)'
+                            }}
+                          >
                             {movie.overview?.substring(0, 200)}...
                           </p>
-                          <div className="mb-4">
+                          <div className="mb-3 mb-md-4">
                             <div className="star-rating mb-2">
-                              <StarRating rating={movie.rating / 2} size="lg" />
+                              <StarRating rating={movie.rating / 2} size="md" />
                             </div>
-                            <span className="text-white">
+                            <span className="text-white" style={{ fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
                               {(movie.rating / 2).toFixed(1)}/5 • {movie.voteCount} votes
                             </span>
                           </div>
                           <Link to={`/movie/${movie.id}`}>
-                            <button className="btn btn-primary btn-lg">
+                            <button className="btn btn-primary" style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 2rem)' }}>
                               <FaPlay className="me-2" />
                               View Details
                             </button>
