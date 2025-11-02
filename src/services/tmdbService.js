@@ -107,10 +107,8 @@ export const getMovieDetails = async (movieId) => {
       makeRequest(`/movie/${movieId}/credits`)
     ]);
     
-    // Find director from crew
     const director = creditsData.crew.find(person => person.job === 'Director');
     
-    // Get top cast members
     const cast = creditsData.cast.slice(0, 10).map(person => person.name);
     
     return {
@@ -263,5 +261,6 @@ const tmdbService = {
   discoverMovies,
   getImageUrl
 };
+
 
 export default tmdbService;
