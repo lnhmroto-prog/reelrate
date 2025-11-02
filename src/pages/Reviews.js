@@ -242,11 +242,11 @@ const Reviews = () => {
               }}
             >
               <option value="all" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>All Ratings</option>
-              <option value="5" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⭐⭐⭐⭐⭐ 5 Stars</option>
-              <option value="4" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⭐⭐⭐⭐ 4 Stars</option>
-              <option value="3" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⭐⭐⭐ 3 Stars</option>
-              <option value="2" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⭐⭐ 2 Stars</option>
-              <option value="1" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⭐ 1 Star</option>
+              <option value="5" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> 5 Stars</option>
+              <option value="4" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> 4 Stars</option>
+              <option value="3" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> 3 Stars</option>
+              <option value="2" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> 2 Stars</option>
+              <option value="1" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> 1 Star</option>
             </Form.Select>
           </InputGroup>
         </Col>
@@ -265,11 +265,11 @@ const Reviews = () => {
                 borderColor: 'rgba(255, 255, 255, 0.1)'
               }}
             >
-              <option value="newest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>🕐 Newest First</option>
-              <option value="oldest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>🕑 Oldest First</option>
-              <option value="highest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⬆️ Highest Rated</option>
-              <option value="lowest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>⬇️ Lowest Rated</option>
-              <option value="helpful" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}>👍 Most Helpful</option>
+              <option value="newest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> Newest First</option>
+              <option value="oldest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> Oldest First</option>
+              <option value="highest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> Highest Rated</option>
+              <option value="lowest" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> Lowest Rated</option>
+              <option value="helpful" style={{ backgroundColor: '#2a2a2a', color: '#ffffff' }}> Most Helpful</option>
             </Form.Select>
           </InputGroup>
         </Col>
@@ -399,5 +399,6 @@ const Reviews = () => {
     </Container>
   );
 };
+
 
 export default Reviews;
