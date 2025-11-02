@@ -28,7 +28,8 @@ function App() {
         <ScrollToTop />
         <div className="App">
           <Navigation />
-          <main className="container mt-4">\n            <Routes>
+          <main className="container mt-4">
+            <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/movie/:id" element={<MovieDetails />} />
               <Route path="/reviews" element={<Reviews />} />
