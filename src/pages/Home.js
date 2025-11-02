@@ -58,7 +58,7 @@ const Home = () => {
     return (
       <Container className="mt-4">
         <div className="empty-state">
-          <h3>⚠️ Oops! Something went wrong</h3>
+          <h3>Oops! Something went wrong</h3>
           <p>{error}</p>
           <button className="btn btn-primary" onClick={() => window.location.reload()}>
             Try Again
@@ -298,3 +298,4 @@ const Home = () => {
 };
 
 export default Home;
+
