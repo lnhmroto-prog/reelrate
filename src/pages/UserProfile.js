@@ -138,7 +138,7 @@ const UserProfile = () => {
               </div>
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="text-light"><FaStar className="me-2" style={{ color: '#ffd700' }} />Average Rating:</span>
-                <Badge style={{ background: '#ffd700', color: '#000' }}>{stats.avgRating} ★</Badge>
+                <Badge style={{ background: '#ffd700', color: '#000' }}>{stats.avgRating} </Badge>
               </div>
             </Card.Body>
           </Card>
@@ -214,4 +214,5 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
 
