@@ -28,7 +28,6 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    // Validation
     if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all fields');
       setLoading(false);
@@ -173,5 +172,6 @@ const Register = () => {
     </Container>
   );
 };
+
 
 export default Register;
