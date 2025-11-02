@@ -1,15 +1,14 @@
 import { 
   collection, 
   doc, 
-  addDoc, 
   getDocs, 
   getDoc, 
   updateDoc, 
-  deleteDoc, 
+  setDoc,
+  deleteDoc,
   query, 
   where, 
-  limit,
-  increment
+  limit
 } from "firebase/firestore";
 import { db, handleFirestoreError } from "./firebase";
 import { COLLECTIONS, VALIDATION } from "../constants";
@@ -37,14 +36,19 @@ export const createReview = async (reviewData) => {
       };
     }
     
-    const docRef = await addDoc(collection(db, COLLECTIONS.REVIEWS), {
+    // Add the review
+    const reviewRef = doc(collection(db, COLLECTIONS.REVIEWS));
+    await setDoc(reviewRef, {
       ...reviewData,
       helpful: 0,
       createdAt: new Date(),
       updatedAt: new Date()
     });
     
-    return { success: true, id: docRef.id };
+    // Recalculate and update user stats
+    await syncUserStats(reviewData.userId);
+    
+    return { success: true, id: reviewRef.id };
   } catch (error) {
     const errorMessage = handleFirestoreError(error, 'Create review');
     return { success: false, error: errorMessage };
@@ -129,9 +133,17 @@ export const updateReview = async (reviewId, updateData) => {
   }
 };
 
-export const deleteReview = async (reviewId) => {
+export const deleteReview = async (reviewId, userId) => {
   try {
-    await deleteDoc(doc(db, COLLECTIONS.REVIEWS, reviewId));
+    // Delete the review
+    const reviewRef = doc(db, COLLECTIONS.REVIEWS, reviewId);
+    await deleteDoc(reviewRef);
+    
+    // Recalculate and update user stats
+    if (userId) {
+      await syncUserStats(userId);
+    }
+    
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -141,8 +153,17 @@ export const deleteReview = async (reviewId) => {
 export const markReviewHelpful = async (reviewId) => {
   try {
     const docRef = doc(db, COLLECTIONS.REVIEWS, reviewId);
+    
+    // Get current helpful count
+    const reviewDoc = await getDoc(docRef);
+    if (!reviewDoc.exists()) {
+      return { success: false, error: 'Review not found' };
+    }
+    
+    const currentHelpful = reviewDoc.data().helpful || 0;
+    
     await updateDoc(docRef, {
-      helpful: increment(1)
+      helpful: currentHelpful + 1
     });
     
     return { success: true };
@@ -176,6 +197,35 @@ export const getReviewStats = async () => {
       }
     };
   } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// Sync user statistics based on their actual reviews
+export const syncUserStats = async (userId) => {
+  try {
+    const reviewsResponse = await getReviews({ userId });
+    const reviews = reviewsResponse.success ? (reviewsResponse.data || []) : [];
+    
+    const totalReviews = reviews.length;
+    const averageRating = totalReviews > 0 
+      ? reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews 
+      : 0;
+    
+    // Update user document with calculated stats
+    const userRef = doc(db, COLLECTIONS.USERS, userId);
+    await updateDoc(userRef, {
+      totalReviews,
+      averageRating: Math.round(averageRating * 10) / 10,
+      updatedAt: new Date()
+    });
+    
+    return { 
+      success: true, 
+      data: { totalReviews, averageRating: Math.round(averageRating * 10) / 10 }
+    };
+  } catch (error) {
+    console.error('Error syncing user stats:', error);
     return { success: false, error: error.message };
   }
 };
