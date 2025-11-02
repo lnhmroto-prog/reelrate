@@ -118,7 +118,7 @@ const Search = () => {
         <Row className="mb-4">
           <Col>
             <div className="empty-state" style={{padding: '1rem', margin: '1rem 0'}}>
-              <p style={{margin: '0', color: '#dc3545'}}>⚠️ {error}</p>
+              <p style={{margin: '0', color: '#dc3545'}}> {error}</p>
             </div>
           </Col>
         </Row>
@@ -295,5 +295,6 @@ const Search = () => {
     </Container>
   );
 };
+
 
 export default Search;
